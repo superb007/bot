@@ -1,0 +1,1 @@
+from .register_routers import register_admin_handlers
