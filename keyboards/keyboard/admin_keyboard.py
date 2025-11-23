@@ -1,4 +1,4 @@
-from data.config import cr_test, main_menu, back, skip, running_exams, archive, stats, help_txt
+from data.config import cr_test, main_menu, back, skip, running_exams, archive, stats, help_txt, users_csv
 from aiogram import types
 
 btn = [
@@ -12,7 +12,8 @@ btn = [
     ],
     [
         types.KeyboardButton(text=help_txt),
-        types.KeyboardButton(text=stats)
+        types.KeyboardButton(text=stats),
+        types.KeyboardButton(text=users_csv)
     ]
 ]
 

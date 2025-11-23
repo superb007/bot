@@ -1,6 +1,9 @@
 BOT_TOKEN = "7539866253:AAGGLa87ybjqceiNXwmsJdRHzGGyoWr7Mzk"
 ADMINS = [6520664733, 5559925195,674538660]
 
+# Add your channel usernames here (e.g., ["@mychannel1", "@mychannel2"])
+REQUIRED_CHANNELS = ["@myscvl"]
+
 MAX_EXAMS_AT_A_TIME = 10
 
 bot_info = ""
@@ -25,6 +28,7 @@ all_at_one = "🤖 All at one"
 running_exams = "⚡️ Running tests"
 archive = "📁 Archive"
 stats = "📊 Stats"
+users_csv = "👥 Users"
 results = "📊 Results"
 help_txt = "🆘 Help"
 cancel = "❌ Cancel"

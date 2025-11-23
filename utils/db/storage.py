@@ -15,7 +15,17 @@ class DatabaseManager(object):
         self.query("CREATE TABLE IF NOT EXISTS exams (idx INTEGER PRIMARY KEY, code TEXT, title TEXT, about TEXT, num_questions INTEGER, correct TEXT, running INTEGER)")
         # self.query('CREATE TABLE IF NOT EXISTS current (correct text, option integer)')
         self.query("CREATE TABLE IF NOT EXISTS submissions(idx INTEGER PRIMARY KEY, exid INTEGER, userid TEXT, date TEXT, corr INTEGER)")
-        self.query('CREATE TABLE IF NOT EXISTS user (idx INTEGER PRIMARY KEY, userid TEXT, fullname TEXT, username TEXT, regdate TEXT)')
+        self.query('CREATE TABLE IF NOT EXISTS user (idx INTEGER PRIMARY KEY, userid TEXT, fullname TEXT, surname TEXT, username TEXT, contact TEXT, regdate TEXT)')
+
+    def migrate_tables(self):
+        try:
+            self.query("ALTER TABLE user ADD COLUMN surname TEXT")
+        except lite.OperationalError:
+            pass # column already exists
+        try:
+            self.query("ALTER TABLE user ADD COLUMN contact TEXT")
+        except lite.OperationalError:
+            pass # column already exists
 
     def query(self, arg, values=None):
         if values == None:

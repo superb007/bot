@@ -8,11 +8,14 @@ from aiogram.filters import CommandStart, Command
 from aiogram import F
 from handlers.admin import register_admin_handlers
 from handlers.user import register_user_handlers
+from middlewares.channel_check import ChannelCheckMiddleware
 from keyboards.keyboard import admin_markup, user_markup
 from aiogram.fsm.context import FSMContext
 from handlers.user.check_answers import check_code
 
 from states import check_states
+from states.onboarding_states import OnboardingStates
+from keyboards.inline.onboarding_inline import get_join_channels_keyboard
 
 
 @dp.message(CommandStart())
@@ -21,7 +24,14 @@ async def process_command(message: types.Message, state: FSMContext) -> None:
     # referral format of test
     reged = db.fetchone("SELECT COUNT(*) FROM user WHERE userid = ?", (message.from_user.id,))[0] > 0
     if not reged:
-        db.query("INSERT INTO user (userid, fullname, username, regdate) VALUES (?, ?, ?, CURRENT_TIMESTAMP)", (message.from_user.id, message.from_user.full_name, message.from_user.username))
+        await state.set_state(OnboardingStates.check_channels)
+        await message.answer(
+            "Welcome! To use this bot, you must be subscribed to our channels. "
+            "Please subscribe to the channels below and then click 'I've Joined'.",
+            reply_markup=get_join_channels_keyboard()
+        )
+        return
+
     todel = ""
     code_mode = False
     if "code" in message.text:
@@ -56,6 +66,7 @@ async def on_startup():
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     await get_info(bot)
     db.create_tables()
+    db.migrate_tables()
     logging.warning("Database started...")
 
 async def on_shutdown():
@@ -68,6 +79,9 @@ async def main():
     await on_startup()
     register_admin_handlers(dp)
     register_user_handlers(dp)
+
+    dp.update.middleware(ChannelCheckMiddleware())
+
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
     await on_shutdown()
